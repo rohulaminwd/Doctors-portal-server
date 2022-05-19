@@ -35,10 +35,11 @@ async function run() {
         const userCollection = client.db("doctors_protal").collection("user");
         const doctorsCollection = client.db("doctors_protal").collection("doctors");
 
+        // multipule middle ware
         const verifyAdmin = async (req, res, next) => {
           const requester = req.decoded.email;
           const requesterAccount = await userCollection.findOne({email: requester});
-          console.log(requesterAccount);
+          // console.log(requesterAccount);
           if(requesterAccount.role === "admin"){
             next();
           }else{
