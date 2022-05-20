@@ -89,15 +89,28 @@ async function run() {
         })
 
         app.get('/user', verifyJWT, async (req, res) => {
-          const result = await userCollection.find().toArray();
-          res.send(result);
+          const doctors = await userCollection.find().toArray();
+          res.send(doctors);
         })
+
+        app.get('/doctor', verifyJWT, verifyAdmin, async (req, res) => {
+          const result = await doctorsCollection.find().toArray();
+          res.send(result);
+        });
 
         app.get('/admin/:email', async (req, res) => {
           const email = req.params.email;
           const user = await userCollection.findOne({email: email});
           const isAdmin = user.role === "admin"
           res.send({admin: isAdmin});
+        })
+
+        // Delete method
+        app.delete('/doctor/:email', verifyJWT, verifyAdmin, async (req, res) => {
+          const email = req.params.email;
+          const filter = {email: email}
+          const result = await doctorsCollection.deleteOne(filter);
+          res.send(result);
         })
 
         // post method
@@ -121,20 +134,12 @@ async function run() {
         // put method
         app.put('/user/admin/:email', verifyJWT, verifyAdmin, async (req, res) => {
           const email = req.params.email;
-          // const requester = req.decoded.email;
-          // const requesterAccount = await userCollection.findOne({email: requester});
-          // console.log(requesterAccount);
-          // if(requesterAccount.role === "admin"){
             const filter = {email: email};
             const updateDoc = {
               $set: {role: "admin"}
             };
             const result = await userCollection.updateOne(filter, updateDoc);
             res.send(result)
-          // }else{
-          //   return res.status(403).send({message: 'Forbidden access'})
-          // }
-          
         })
 
         app.put('/user/:email', async (req, res) => {
