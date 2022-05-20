@@ -10,7 +10,7 @@ app.use(cors());
 app.use(express.json());
 
 app.get('/', (req, res) => {
-  res.send('Hello world')
+  res.send('Hello world!! server is running')
 })
 
 // jwt token function
